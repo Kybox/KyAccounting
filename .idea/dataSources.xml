@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
+    <data-source source="LOCAL" name="db_myerp@5.196.95.68" uuid="3e33d072-11ce-4143-8ad0-c48ffd38481d">
+      <driver-ref>postgresql</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>org.postgresql.Driver</jdbc-driver>
+      <jdbc-url>jdbc:postgresql://5.196.95.68:9032/db_myerp</jdbc-url>
+    </data-source>
+  </component>
+</project>
