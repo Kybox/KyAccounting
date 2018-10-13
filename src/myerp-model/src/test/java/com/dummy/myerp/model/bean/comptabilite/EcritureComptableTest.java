@@ -2,59 +2,43 @@ package com.dummy.myerp.model.bean.comptabilite;
 
 import java.math.BigDecimal;
 
-import org.apache.commons.lang3.ObjectUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
 public class EcritureComptableTest {
 
-    private final Logger LOGGER = LogManager.getLogger(this.getClass());
-
-    private LigneEcritureComptable createLigne(Integer pCompteComptableNumero, String pDebit, String pCredit) {
-        BigDecimal vDebit = pDebit == null ? null : new BigDecimal(pDebit);
-        BigDecimal vCredit = pCredit == null ? null : new BigDecimal(pCredit);
-
-        String vLibelle = ObjectUtils.defaultIfNull(vDebit, BigDecimal.ZERO)
-                                     .subtract(ObjectUtils.defaultIfNull(vCredit, BigDecimal.ZERO)).toPlainString();
-
-        return new LigneEcritureComptable(
-                new CompteComptable(pCompteComptableNumero),
-                vLibelle,
-                vDebit, vCredit);
-    }
+    private Logger logger = LogManager.getLogger(this.getClass());
 
     @Test
-    public void isEquilibree() {
+    public void isEquilibree(){
 
-        EcritureComptable vEcriture = new EcritureComptable();
-        //EcritureComptable vEcriture = Mockito.mock(EcritureComptable.class);
+        EcritureComptable ecriture = Mockito.mock(EcritureComptable.class);
 
-        vEcriture.setLibelle("Equilibrée");
-        vEcriture.getListLigneEcriture().add(this.createLigne(1, "200.50", null));
-        vEcriture.getListLigneEcriture().add(this.createLigne(1, "100.50", "33"));
-        vEcriture.getListLigneEcriture().add(this.createLigne(2, null, "301"));
-        vEcriture.getListLigneEcriture().add(this.createLigne(2, "40", "7"));
+        Mockito.doCallRealMethod().when(ecriture).isEquilibree();
 
-        System.out.println("Equilibrée : " + vEcriture.getTotalCredit() + " / " + vEcriture.getTotalDebit());
-        Assert.assertTrue(vEcriture.toString(), vEcriture.isEquilibree());
+        // totalCredit = 100, totalDebit = 100
+        Mockito.when(ecriture.getTotalCredit()).thenReturn(BigDecimal.valueOf(100));
+        Mockito.when(ecriture.getTotalDebit()).thenReturn(BigDecimal.valueOf(100));
+        Assert.assertTrue(ecriture.isEquilibree());
 
-        vEcriture.getListLigneEcriture().clear();
+        // totalCredit = 100, totalDebit = 10
+        Mockito.when(ecriture.getTotalDebit()).thenReturn(BigDecimal.valueOf(10));
+        Assert.assertFalse(ecriture.isEquilibree());
 
-        vEcriture.setLibelle("Non équilibrée");
-        vEcriture.getListLigneEcriture().add(this.createLigne(1, "10", null));
-        vEcriture.getListLigneEcriture().add(this.createLigne(1, "20", "1"));
-        vEcriture.getListLigneEcriture().add(this.createLigne(2, null, "30"));
-        vEcriture.getListLigneEcriture().add(this.createLigne(2, "2", "20"));
+        // Negative values, totalCredit = -100, totalDebit = -100
+        Mockito.when(ecriture.getTotalCredit()).thenReturn(BigDecimal.valueOf(-100));
+        Mockito.when(ecriture.getTotalDebit()).thenReturn(BigDecimal.valueOf(-100));
+        Assert.assertTrue(ecriture.isEquilibree());
 
-        System.out.println("Non Equilibrée : " + vEcriture.getTotalCredit() + " / " + vEcriture.getTotalDebit());
-        Assert.assertFalse(vEcriture.toString(), vEcriture.isEquilibree());
+        // Negative values, totalCredit = -100, totalDebit = -10
+        Mockito.when(ecriture.getTotalDebit()).thenReturn(BigDecimal.valueOf(-10));
+        Assert.assertFalse(ecriture.isEquilibree());
     }
 
 }
