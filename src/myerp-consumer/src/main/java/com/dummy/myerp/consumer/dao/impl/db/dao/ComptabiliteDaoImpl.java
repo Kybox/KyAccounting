@@ -263,22 +263,34 @@ public class ComptabiliteDaoImpl extends AbstractDbConsumer implements Comptabil
     }
 
     /** SQLgetSequenceByCode */
-    private static String SQLgetSequenceByCode;
-    public void setSQLgetSequenceByCode(String pSQLgetSequenceByCode){
-        SQLgetSequenceByCode = pSQLgetSequenceByCode;
+    private static String SQLgetSequence;
+    public void setSQLgetSequence(String pSQLgetSequenceByCode){
+        SQLgetSequence = pSQLgetSequenceByCode;
     }
     @Override
-    public SequenceEcritureComptable getSequenceEcritureComptableByCode(SequenceEcritureComptable pSequence)
+    public SequenceEcritureComptable getSequenceEcritureComptable(SequenceEcritureComptable pSequence)
             throws NotFoundException{
         NamedParameterJdbcTemplate vJdbcTemplate = new NamedParameterJdbcTemplate(getDataSource(DataSourcesEnum.MYERP));
         MapSqlParameterSource vSqlParams = new MapSqlParameterSource();
         vSqlParams.addValue("journal_code", pSequence.getCodeJournal());
+        vSqlParams.addValue("annee", pSequence.getAnnee());
 
-        try {
-            return vJdbcTemplate.queryForObject(SQLgetSequenceByCode, vSqlParams, new SequenceEcritureComptableRM());
-        }
-        catch (EmptyResultDataAccessException vEx){
-            throw new NotFoundException("Séquence écriture compte inéxistante");
-        }
+        try { return vJdbcTemplate.queryForObject(SQLgetSequence, vSqlParams, new SequenceEcritureComptableRM()); }
+        catch (EmptyResultDataAccessException vEx){ throw new NotFoundException("Séquence écriture compte inéxistante"); }
+    }
+
+    /** SQLupdateSequenceEcritureComptable */
+    private static String SQLupdateSequenceEcritureComptable;
+    public void setSQLupdateSequenceEcritureComptable(String pSQLupdateSequenceEcritureComptable){
+        SQLupdateSequenceEcritureComptable = pSQLupdateSequenceEcritureComptable;
+    }
+    @Override
+    public void updateSequenceEcritureComptable(SequenceEcritureComptable pSequence){
+        NamedParameterJdbcTemplate vJdbcTemplate = new NamedParameterJdbcTemplate(getDataSource(DataSourcesEnum.MYERP));
+        MapSqlParameterSource vSqlParams = new MapSqlParameterSource();
+        vSqlParams.addValue("journal_code", pSequence.getCodeJournal());
+        vSqlParams.addValue("annee", pSequence.getAnnee());
+        vSqlParams.addValue("derniere_valeur", pSequence.getDerniereValeur());
+        vJdbcTemplate.update(SQLupdateSequenceEcritureComptable, vSqlParams);
     }
 }

@@ -88,5 +88,11 @@ public interface ComptabiliteDao {
      * @return {@link SequenceEcritureComptable}
      * @throws NotFoundException : Si aucune séquence n'est trouvée
      */
-    SequenceEcritureComptable getSequenceEcritureComptableByCode(SequenceEcritureComptable sequenceEcritureComptable) throws NotFoundException;
+    SequenceEcritureComptable getSequenceEcritureComptable(SequenceEcritureComptable sequenceEcritureComptable) throws NotFoundException;
+
+    /**
+     * Mise à jour d'une écriture comptable
+     * @param sequenceEcritureComptable
+     */
+    void updateSequenceEcritureComptable(SequenceEcritureComptable sequenceEcritureComptable);
 }

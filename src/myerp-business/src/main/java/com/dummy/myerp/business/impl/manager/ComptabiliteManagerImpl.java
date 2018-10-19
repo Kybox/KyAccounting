@@ -1,20 +1,19 @@
 package com.dummy.myerp.business.impl.manager;
 
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 
+import com.dummy.myerp.model.bean.comptabilite.*;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.transaction.TransactionStatus;
 import com.dummy.myerp.business.contrat.manager.ComptabiliteManager;
 import com.dummy.myerp.business.impl.AbstractBusinessManager;
-import com.dummy.myerp.model.bean.comptabilite.CompteComptable;
-import com.dummy.myerp.model.bean.comptabilite.EcritureComptable;
-import com.dummy.myerp.model.bean.comptabilite.JournalComptable;
-import com.dummy.myerp.model.bean.comptabilite.LigneEcritureComptable;
 import com.dummy.myerp.technical.exception.FunctionalException;
 import com.dummy.myerp.technical.exception.NotFoundException;
 
@@ -74,6 +73,37 @@ public class ComptabiliteManagerImpl extends AbstractBusinessManager implements 
                 4.  Enregistrer (insert/update) la valeur de la séquence en persitance
                     (table sequence_ecriture_comptable)
          */
+
+        /* 1 */
+        SequenceEcritureComptable sequenceCourante = new SequenceEcritureComptable();
+        sequenceCourante.setCodeJournal(pEcritureComptable.getJournal().getCode());
+
+        int annee = Integer.parseInt(new SimpleDateFormat("yyyy")
+                .format(pEcritureComptable.getDate()));
+        sequenceCourante.setAnnee(annee);
+
+        SequenceEcritureComptable receivedSequence = null;
+        try { receivedSequence = getDaoProxy().getComptabiliteDao().getSequenceEcritureComptable(sequenceCourante); }
+        catch (NotFoundException e) { e.printStackTrace(); }
+
+        /* 2 */
+        int num;
+        if(receivedSequence == null) num = 1;
+        else num = receivedSequence.getDerniereValeur() + 1;
+
+        /* 3 */
+        String ref = pEcritureComptable.getJournal().getCode() + "-" + annee + "/" + String.format("%05d", num);
+        pEcritureComptable.setReference(ref);
+
+        try { updateEcritureComptable(pEcritureComptable); }
+        catch (FunctionalException e) { e.printStackTrace(); }
+
+        /* 4 */
+        SequenceEcritureComptable newSequence = new SequenceEcritureComptable();
+        newSequence.setCodeJournal(pEcritureComptable.getJournal().getCode());
+        newSequence.setAnnee(annee);
+        newSequence.setDerniereValeur(num);
+        updateSequenceEcritureComptable(newSequence);
     }
 
     /**
@@ -209,5 +239,19 @@ public class ComptabiliteManagerImpl extends AbstractBusinessManager implements 
         } finally {
             getTransactionManager().rollbackMyERP(vTS);
         }
+    }
+
+    @Override
+    public void updateSequenceEcritureComptable(SequenceEcritureComptable sequenceEcritureComptable) {
+        TransactionStatus vTS = getTransactionManager().beginTransactionMyERP();
+        try{
+            getDaoProxy().getComptabiliteDao().updateSequenceEcritureComptable(sequenceEcritureComptable);
+            getTransactionManager().commitMyERP(vTS);
+            vTS = null;
+        }
+        finally {
+            getTransactionManager().commitMyERP(vTS);
+        }
+
     }
 }
