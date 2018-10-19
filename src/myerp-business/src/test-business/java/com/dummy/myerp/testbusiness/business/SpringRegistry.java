@@ -7,10 +7,10 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import com.dummy.myerp.business.contrat.BusinessProxy;
 import com.dummy.myerp.business.impl.TransactionManager;
 
-
 /**
  * Registre des Beans Spring.
  */
+
 public final class SpringRegistry {
 
     /** Logger Log4j pour la classe */
@@ -81,7 +81,7 @@ public final class SpringRegistry {
      * @return {@link BusinessProxy}
      */
     public static BusinessProxy getBusinessProxy() {
-        return (BusinessProxy) SpringRegistry.getBean("BusinessProxy");
+        return (BusinessProxy) SpringRegistry.getBean("businessProxy");
     }
 
 
@@ -91,6 +91,6 @@ public final class SpringRegistry {
      * @return {@link TransactionManager}
      */
     public static TransactionManager getTransactionManager() {
-        return (TransactionManager) SpringRegistry.getBean("TransactionManager");
+        return (TransactionManager) SpringRegistry.getBean("transactionManager");
     }
 }
