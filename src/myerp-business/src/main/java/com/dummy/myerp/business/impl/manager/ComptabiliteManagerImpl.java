@@ -11,6 +11,8 @@ import javax.validation.ConstraintViolationException;
 import com.dummy.myerp.model.bean.comptabilite.*;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.transaction.TransactionStatus;
 import com.dummy.myerp.business.contrat.manager.ComptabiliteManager;
 import com.dummy.myerp.business.impl.AbstractBusinessManager;
@@ -22,6 +24,8 @@ import com.dummy.myerp.technical.exception.NotFoundException;
  * Comptabilite manager implementation.
  */
 public class ComptabiliteManagerImpl extends AbstractBusinessManager implements ComptabiliteManager {
+
+    private Logger logger = LogManager.getLogger(this.getClass());
 
     // ==================== Attributs ====================
 
