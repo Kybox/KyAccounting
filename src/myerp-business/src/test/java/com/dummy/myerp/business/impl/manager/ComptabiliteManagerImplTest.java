@@ -26,6 +26,11 @@ public class ComptabiliteManagerImplTest {
         vEcritureComptable.setLibelle("Libelle");
     }
 
+    @Test
+    public void addReference(){
+
+    }
+
     @Test()
     public void checkEcritureComptableUnit() throws Exception {
 
